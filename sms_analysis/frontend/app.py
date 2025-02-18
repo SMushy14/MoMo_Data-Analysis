@@ -1,33 +1,31 @@
+from flask import Flask, jsonify, request
 import sqlite3
-import os
-from flask import Flask, render_template
 
 app = Flask(__name__)
 
+def get_db_connection():
+    conn = sqlite3.connect('transactions.db')
+    conn.row_factory = sqlite3.Row  # Enables column access by name
+    return conn
+
+@app.route('/transactions', methods=['GET'])
 def get_transactions():
-    db_file = os.path.join(os.path.dirname(__file__), "../db/sms_transactions.db")
+    conn = get_db_connection()
+    cursor = conn.cursor()
     
-    # Ensure the database file exists
-    if not os.path.exists(db_file):
-        print(f"Error: Database file '{db_file}' not found.")
-        return []
+    query = "SELECT * FROM transactions"
+    filters = []
+    
+    transaction_type = request.args.get('type')
+    if transaction_type:
+        query += " WHERE type = ?"
+        filters.append(transaction_type)
+    
+    cursor.execute(query, filters)
+    transactions = cursor.fetchall()
+    conn.close()
+    
+    return jsonify([dict(row) for row in transactions])
 
-    try:
-        with sqlite3.connect(db_file) as conn:
-            conn.row_factory = sqlite3.Row  # Access columns by name
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM transactions")
-            data = cursor.fetchall()
-            print("Fetched Transactions:", data)  # Debugging
-            return data
-    except sqlite3.Error as e:
-        print("Database error:", e)
-        return []
-
-@app.route("/")
-def home():
-    transactions = get_transactions()
-    return render_template("index.html", transactions=transactions)
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
