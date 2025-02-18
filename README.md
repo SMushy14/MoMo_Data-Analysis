@@ -1,3 +1,6 @@
+AUTHOR: Sharon Francis Mushy
+
+
 Overview:
 In this summative assignment, you will demonstrate your ability to design and develop an enterprise-level fullstack application. Your task is to process SMS data in XML format, clean and categorize the data, store it in a relational database, and build a frontend interface to analyze and visualize the data. This assignment tests your skills in backend data processing, database management, and frontend development.
 
