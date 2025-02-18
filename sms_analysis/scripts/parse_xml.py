@@ -1,38 +1,62 @@
-import csv
-import xml.etree.ElementTree as ET  # Import the XML parsing library
+import xml.etree.ElementTree as ET
 
-# Define file paths
-xml_file_path = "/home/pamdacode/MoMo_Data-Analysis/sms_analysis/data/modified_sms_v2.xml"
-csv_file_path = "/home/pamdacode/MoMo_Data-Analysis/sms_analysis/data/parsed_sms.csv"
+def parse_xml(file_path):
+    """Parses the XML file and extracts SMS transaction details."""
+    tree = ET.parse(file_path)
+    root = tree.getroot()
 
-# Parse the XML file
-tree = ET.parse(xml_file_path)  # Load the XML file
-root = tree.getroot()  # Get the root element
+    transactions = []
 
-# Open the CSV file properly within a "with open" block
-with open(csv_file_path, mode="w", newline="", encoding="utf-8") as csv_file:
-    writer = csv.writer(csv_file)
+    for sms in root.findall('sms'):
+        body = sms.find('body').text if sms.find('body') is not None else ""
 
-    # Write the CSV header (Fixed missing comma)
-    writer.writerow(["Date", "Transaction Type", "Amount", "Sender_Receiver", "New_Balance", "Transaction ID"])
+        # Extract transaction details using simple text parsing
+        transaction = {
+            "body": body,
+            "type": categorize_transaction(body),
+            "amount": extract_amount(body),
+            "date": extract_date(body),
+            "transaction_id": extract_transaction_id(body)
+        }
 
-    # Iterate over XML messages and extract transaction details
-    for message in root.findall(".//message"):
-        text_element = message.find("text")  # Get the SMS text element
+        transactions.append(transaction)
 
-        if text_element is not None and text_element.text:
-            text = text_element.text
-            parts = text.split("\n")  # Split SMS content into lines
+    return transactions
 
-            # Extract transaction details (handling missing fields safely)
-            date = message.get("date", "N/A")
-            transaction_type = parts[0] if len(parts) > 0 else "N/A"
-            amount = parts[1].split("Amount: ")[1] if len(parts) > 1 and "Amount: " in parts[1] else "N/A"
-            sender_receiver = parts[2].split("Sender_Receiver: ")[1] if len(parts) > 2 and "Sender_Receiver: " in parts[2] else "N/A"
-            new_balance = parts[3].split("New_Balance: ")[1] if len(parts) > 3 and "New_Balance: " in parts[3] else "N/A"
-            transaction_id = parts[0].split("TxId: ")[1] if "TxId: " in parts[0] else "N/A"
+def categorize_transaction(body):
+    """Categorizes the transaction based on keywords in the message body."""
+    if "received" in body.lower():
+        return "Incoming Money"
+    elif "payment" in body.lower():
+        return "Payments to Code Holders"
+    elif "withdrawn" in body.lower():
+        return "Withdrawals from Agents"
+    elif "bundle" in body.lower():
+        return "Internet and Voice Bundle Purchases"
+    else:
+        return "Other"
 
-            # Write extracted data to the CSV file
-            writer.writerow([date, transaction_type, amount, sender_receiver, new_balance, transaction_id])
+def extract_amount(body):
+    """Extracts transaction amount from the message body."""
+    import re
+    match = re.search(r"(\d+)\s*RWF", body)
+    return int(match.group(1)) if match else None
 
-print("XML parsing completed. Data saved in transactions.csv.")
+def extract_date(body):
+    """Extracts the transaction date from the message body."""
+    import re
+    match = re.search(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})", body)
+    return match.group(1) if match else None
+
+def extract_transaction_id(body):
+    """Extracts the transaction ID from the message body."""
+    import re
+    match = re.search(r"TxId[: ]?(\d+)", body)
+    return match.group(1) if match else None
+
+# Example Usage
+if __name__ == "__main__":
+    xml_file_path = "modified_sms_v2.xml"  # Update this path as needed
+    transactions = parse_xml(xml_file_path)
+    for tx in transactions[:5]:  # Print first 5 transactions for verification
+        print(tx)
