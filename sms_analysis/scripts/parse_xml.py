@@ -1,62 +1,83 @@
 import xml.etree.ElementTree as ET
+import re
+import logging
+from datetime import datetime
 
-def parse_xml(file_path):
-    """Parses the XML file and extracts SMS transaction details."""
-    tree = ET.parse(file_path)
-    root = tree.getroot()
 
-    transactions = []
+# Configure logging for unprocessed messages
+logging.basicConfig(filename='unprocessed_sms.log', level=logging.WARNING, format='%(asctime)s - %(message)s')
 
-    for sms in root.findall('sms'):
-        body = sms.find('body').text if sms.find('body') is not None else ""
+# Parse XML file
+tree = ET.parse('modified_sms_v2.xml')
+root = tree.getroot()
 
-        # Extract transaction details using simple text parsing
-        transaction = {
-            "body": body,
-            "type": categorize_transaction(body),
-            "amount": extract_amount(body),
-            "date": extract_date(body),
-            "transaction_id": extract_transaction_id(body)
-        }
 
-        transactions.append(transaction)
+# Function to extract amount from SMS body
+def extract_amount(sms_body):
+    match = re.search(r'([0-9]+[,.]?[0-9]*) RWF', sms_body)
+    return int(match.group(1).replace(',', '')) if match else None
 
-    return transactions
 
-def categorize_transaction(body):
-    """Categorizes the transaction based on keywords in the message body."""
-    if "received" in body.lower():
-        return "Incoming Money"
-    elif "payment" in body.lower():
-        return "Payments to Code Holders"
-    elif "withdrawn" in body.lower():
-        return "Withdrawals from Agents"
-    elif "bundle" in body.lower():
-        return "Internet and Voice Bundle Purchases"
-    else:
-        return "Other"
-
-def extract_amount(body):
-    """Extracts transaction amount from the message body."""
-    import re
-    match = re.search(r"(\d+)\s*RWF", body)
-    return int(match.group(1)) if match else None
-
-def extract_date(body):
-    """Extracts the transaction date from the message body."""
-    import re
-    match = re.search(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})", body)
+# Extract transaction ID from SMS body
+def extract_transaction_id(sms_body):
+    match = re.search(r'TxId[:\s]+(\d+)', sms_body)
     return match.group(1) if match else None
 
-def extract_transaction_id(body):
-    """Extracts the transaction ID from the message body."""
-    import re
-    match = re.search(r"TxId[: ]?(\d+)", body)
-    return match.group(1) if match else None
 
-# Example Usage
-if __name__ == "__main__":
-    xml_file_path = "modified_sms_v2.xml"  # Update this path as needed
-    transactions = parse_xml(xml_file_path)
-    for tx in transactions[:5]:  # Print first 5 transactions for verification
-        print(tx)
+# Convert timestamp to readable date and time
+def format_date(timestamp):
+    try:
+        dt = datetime.fromtimestamp(int(timestamp) / 1000)
+        return dt.strftime('%Y-%m-%d'), dt.strftime('%H:%M:%S')
+    except ValueError:
+        return None, None
+
+
+# Define transaction categories
+categories = {
+    "Incoming Money": ["received"],
+    "Payment to Code Holder": ["payment"],
+    "Transfers to Mobile Numbers": ["transferred"],
+    "Bank Deposits": ["deposit"],
+    "Airtime Bill Payments": ["Airtime"],
+    "Cash Power Bill Payments": ["Power"],
+    "Transactions Initiated by Third Parties": ["transaction"],
+    "Withdrawals from Agents": ["via agent"],
+    "Bank Transfers": ["bank transfer"],
+    "Internet and Voice Bundle Purchases": ["Bundles"]
+}
+
+# Initialize data structure for relational database
+transactions = []
+
+# Process SMS data
+for sms in root.findall('sms'):
+    smsBody = sms.get('body', "")
+    smsDate = sms.get('date')
+    formattedDate, formattedTime = format_date(smsDate)
+    amount = extract_amount(smsBody)
+    transaction_id = extract_transaction_id(smsBody)
+
+    # Ignore SMS without essential data
+    if not smsBody or not formattedDate or amount is None:
+        logging.warning(f"Unprocessed SMS: {smsBody}")
+        continue
+
+    category = "Text to ignore"
+    for cat, keywords in categories.items():
+        if any(keyword in smsBody for keyword in keywords):
+            category = cat
+            break
+
+    transactions.append({
+        "category": category,
+        "date": formattedDate,
+        "time": formattedTime,
+        "amount": amount,
+        "transaction_id": transaction_id,
+        "body": smsBody
+    })
+
+# Print results (for preview)
+for transaction in transactions:  # Display transactions for preview
+    print(transaction)
