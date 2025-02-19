@@ -3,7 +3,7 @@ import csv
 import os
 
 # Define the database file path
-db_file = os.path.join(os.path.dirname(__file__), "../db/sms_transactions.db")
+db_file = os.path.join(os.path.dirname(__file__), "transactions.db")
 
 # Check if the database file exists; if not, create it
 if not os.path.exists(db_file):
