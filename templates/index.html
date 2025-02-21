@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>MoMo Dashboard</title>
+    <style>
+        body {
+            font-family: monospace;
+            text-align: center;
+            padding: 20px;
+            background-color: #f6e4d2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #142339;
+            border-radius: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: #142339;
+        }
+        h1 {
+            color: #142339;
+        }
+        .amount {
+            font-size: 24px;
+            margin: 10px 0;
+            text-align: left;
+        }
+        strong {
+            color: #142339;
+        }
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <h1>MoMo Dashboard</h1>
+        <p class='amount'>Total Deposited: <strong>{{ totals['total_deposits'] }} RWF</strong></p>
+        <p class='amount'>Total Withdrawn: <strong>{{ totals['total_withdrawals'] }} RWF</strong></p>
+        <p class='amount'>Total Spent on Bundles & Fees: <strong>{{ totals['total_spent'] }} RWF</strong></p>
+    </div>
+</body>
+</html>
