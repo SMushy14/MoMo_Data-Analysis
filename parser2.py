@@ -28,5 +28,7 @@ def parse_uploaded_xml(file_path):
         VALUES (?, ?, ?, ?)
         """, (transaction_id, amount, date_time, transaction_type))
 
+        print(f"Inserted: {transaction_id} - {amount} - {date_time} - {transaction_type}")
+
     conn.commit()
     conn.close()
