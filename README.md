@@ -24,3 +24,5 @@ Store the parsed information filtered from the XML file
 
 **Methodolody**
 The parser.py file filters data from the sample_data.xml file and stores it in the parsed_data.db database. ->> The app.py file displays information from the parsed_data.db file and displays it through the index.html file(MoMo Dashboard).
+
+link to the Project Report ---> [Click here to view the file](https://docs.google.com/document/d/1A0QkqYsS9wNocVKEPHVHvcMb4saqCf1Xd0qrsIVKoDk/edit?usp=sharing )
