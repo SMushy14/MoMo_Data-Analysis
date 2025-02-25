@@ -5,35 +5,78 @@ app = Flask(__name__)
 
 template = """
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Transaction Records</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoMo Dashboard</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-        table { width: 80%; border-collapse: collapse; margin: 20px auto; }
-        th, td { padding: 10px; text-align: left; border: 1px solid #ddd; }
-        th { background-color: #f4f4f4; }
-        .container { width: 80%; margin: auto; }
-        .filter-form { margin-bottom: 20px; }
+        body {
+            font-family: monospace;
+            text-align: center;
+            padding: 20px;
+        }
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            border-radius: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid;
+        }
+        th {
+            background-color: #FFCB05;
+            color: #00151e;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+        .filter-form {
+            margin-bottom: 20px;
+        }
         .summary-card {
             display: inline-block;
             width: 30%;
             padding: 15px;
             margin: 10px;
-            background: #f4f4f4;
+            background: #00151e;
+            color: white;
             border-radius: 10px;
             box-shadow: 2px 2px 5px #aaa;
+        }
+        button {
+            color: #00151e;
+            background: #FFCB05;
+            border: none;
+            border-radius: 30px;
+            width: 80px;
+            height: 40px;
+            font-size: 15px;
+        }
+        h2 {
+            font-size: 50px;
+        }
+        label {
+            font-size: 25px;
+        }
+        select {
+            width: 150px;
+            height: 45px;
+            border-radius: 20px;
         }
     </style>
 </head>
 <body>
-    <h2>Transaction Records</h2>
+    <h2>MoMo Dashboard</h2>
 
-    <!-- Filter Form -->
     <form class="filter-form" method="GET">
         <label for="transaction_type">Filter by Transaction Type:</label>
         <select name="transaction_type">
-            <option value="">All</option>
+            <option value="choice">All</option>
             <option value="Deposit" {% if filter_type == 'Deposit' %}selected{% endif %}>Deposit</option>
             <option value="Withdrawal" {% if filter_type == 'Withdrawal' %}selected{% endif %}>Withdrawal</option>
             <option value="Payment" {% if filter_type == 'Payment' %}selected{% endif %}>Payment</option>
@@ -41,7 +84,6 @@ template = """
         <button type="submit">Filter</button>
     </form>
 
-    <!-- Summary Cards -->
     <div class="container">
         {% for type, total in summary.items() %}
             <div class="summary-card">
@@ -51,7 +93,6 @@ template = """
         {% endfor %}
     </div>
 
-    <!-- Transactions Table -->
     {% if transactions %}
     <table>
         <tr>
