@@ -29,7 +29,6 @@ Script to extract and identify the important keywords in the XML file so that it
 Store the parsed information filtered from the XML file
 
 ## Methodolody
-The ```parser.py
-file filters data from the sample_data.xml file and stores it in the parsed_data.db database. ->> The app.py file displays information from the parsed_data.db file and displays it through the index.html file(MoMo Dashboard).
+The `parser2.py` file filters data from the `modified_sms_v2.xml` file and stores it in the `parsed_data2.db` database. The `app2.py` file displays information from the `parsed_data2.db` file and displays it through the `index.html` file#(`MoMo Dashboard`).
 
 [Link to the Project Report](https://docs.google.com/document/d/1A0QkqYsS9wNocVKEPHVHvcMb4saqCf1Xd0qrsIVKoDk/edit?usp=sharing )
