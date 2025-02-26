@@ -1,5 +1,5 @@
 # 💰 MoMo Dashboard
-![MoMo Dashboard Screenshot]([https://your-image-url.com/image.png](https://i.postimg.cc/8z1ZMQvK/Screenshot-2025-02-26-232410.png))
+![MoMo Dashboard Screenshot](https://i.postimg.cc/8z1ZMQvK/Screenshot-2025-02-26-232410.png)
 
 **MoMo Dashboard** is a web application that displays the contents of transactions that happened on a person's mobile money account. It helps the user know how much they spent on Airtime, Internet bundles, voice bundles, how much they’ve withdrawn from their account, how much was deposited, and more.
 
