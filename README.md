@@ -1,3 +1,4 @@
+#**MoMo Dashboard** 
 **MoMo Dashboard** is a web application that displays the contents of transactions that happened on a person's mobile money account. It helps the user know how much they spent on Airtime, Internet bundles, voice bundles, how much they’ve withdrawn from their account, how much was deposited, and more.
 
 **Introduction**
@@ -25,4 +26,4 @@ Store the parsed information filtered from the XML file
 **Methodolody**
 The parser.py file filters data from the sample_data.xml file and stores it in the parsed_data.db database. ->> The app.py file displays information from the parsed_data.db file and displays it through the index.html file(MoMo Dashboard).
 
-link to the Project Report ---> [Click here to view the file](https://docs.google.com/document/d/1A0QkqYsS9wNocVKEPHVHvcMb4saqCf1Xd0qrsIVKoDk/edit?usp=sharing )
+[Link to the Project Report](https://docs.google.com/document/d/1A0QkqYsS9wNocVKEPHVHvcMb4saqCf1Xd0qrsIVKoDk/edit?usp=sharing )
