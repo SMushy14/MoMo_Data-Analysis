@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoMo Dashboard</title>
+    <link href="styles.css" rel="stylesheet"/>
+</head>
+<body>
+    <h2>MoMo Dashboard</h2>
+
+    <form class="filter-form" method="GET">
+        <label for="transaction_type">Filter by Transaction Type:</label>
+        <select name="transaction_type">
+            <option value="choice">All</option>
+            <option value="Deposit" {% if filter_type == 'Deposit' %}selected{% endif %}>Deposit</option>
+            <option value="Withdrawal" {% if filter_type == 'Withdrawal' %}selected{% endif %}>Withdrawal</option>
+            <option value="Payment" {% if filter_type == 'Payment' %}selected{% endif %}>Payment</option>
+        </select>
+        <button type="submit">Filter</button>
+    </form>
+
+    <div class="container">
+        {% for type, total in summary.items() %}
+            <div class="summary-card">
+                <h3>{{ type }}</h3>
+                <p><strong>{{ total }} RWF</strong></p>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if transactions %}
+    <table>
+        <tr>
+            <th>Transaction ID</th>
+            <th>Amount (RWF)</th>
+            <th>Date & Time</th>
+            <th>Transaction Type</th>
+        </tr>
+        {% for transaction in transactions %}
+        <tr>
+            <td>{{ transaction[0] }}</td>
+            <td>{{ transaction[1] }}</td>
+            <td>{{ transaction[2] }}</td>
+            <td>{{ transaction[3] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No transactions found.</p>
+    {% endif %}
+</body>
+</html>
