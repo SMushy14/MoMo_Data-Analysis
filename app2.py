@@ -77,9 +77,11 @@ template = """
         <label for="transaction_type">Filter by Transaction Type:</label>
         <select name="transaction_type">
             <option value="choice">All</option>
-            <option value="Deposit" {% if filter_type == 'Deposit' %}selected{% endif %}>Deposit</option>
-            <option value="Withdrawal" {% if filter_type == 'Withdrawal' %}selected{% endif %}>Withdrawal</option>
+            <option value="Bank Deposit" {% if filter_type == 'Bank Deposit' %}selected{% endif %}>Bank Deposit</option>
+            <option value="Transfer" {% if filter_type == 'Transfer' %}selected{% endif %}>Transfer</option>
             <option value="Payment" {% if filter_type == 'Payment' %}selected{% endif %}>Payment</option>
+            <option value="Received" {% if filter_type == 'Received' %}selected{% endif %}>Received</option>
+
         </select>
         <button type="submit">Filter</button>
     </form>
@@ -127,21 +129,21 @@ def get_transactions(transaction_type=None):
             cursor.execute("SELECT transaction_id, amount, date_time, transaction_type FROM transactions WHERE transaction_type = ?", (transaction_type,))
         else:
             cursor.execute("SELECT transaction_id, amount, date_time, transaction_type FROM transactions")
-        
+
         transactions = cursor.fetchall()
     except sqlite3.Error as e:
         print(f"Database error: {e}")
         transactions = []
     finally:
         conn.close()
-    
+
     return transactions
 
 def get_transaction_summary():
     """Calculate the total amount spent per transaction type."""
     conn = sqlite3.connect("parsed_data2.db")
     cursor = conn.cursor()
-    
+
     try:
         cursor.execute("SELECT transaction_type, SUM(amount) FROM transactions GROUP BY transaction_type")
         summary = {row[0]: row[1] for row in cursor.fetchall()}
@@ -150,7 +152,7 @@ def get_transaction_summary():
         summary = {}
     finally:
         conn.close()
-    
+
     return summary
 
 @app.route('/')
@@ -158,7 +160,7 @@ def display_transactions():
     filter_type = request.args.get('transaction_type')
     transactions = get_transactions(filter_type)
     summary = get_transaction_summary()
-    
+
     return render_template_string(template, transactions=transactions, filter_type=filter_type, summary=summary)
 
 if __name__ == '__main__':
