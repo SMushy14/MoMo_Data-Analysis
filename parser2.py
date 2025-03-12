@@ -71,5 +71,5 @@ def parse_uploaded_xml(file_path):
     conn.close()
 
 if __name__ == "__main__":
-    xml_file_path="modified_sms_v2.xml"  # Update with actual XML file path
+    xml_file_path="modified_sms_v2.xml"
     parse_uploaded_xml(xml_file_path)
